@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ApmService } from '@elastic/apm-rum-angular';
+import { ApmModule, ApmService } from '@elastic/apm-rum-angular';
 import { ErrorHandler } from '@angular/core'
 import { ApmErrorHandler } from '@elastic/apm-rum-angular'
 
@@ -13,9 +13,11 @@ import { ApmErrorHandler } from '@elastic/apm-rum-angular'
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ApmModule
   ],
-  providers: [ApmService,
+  providers: [
+    ApmService,
     {
       provide: ErrorHandler,
       useClass: ApmErrorHandler
@@ -25,9 +27,13 @@ import { ApmErrorHandler } from '@elastic/apm-rum-angular'
 export class AppModule { 
   constructor(service: ApmService) {
     // Agent API is exposed through this apm instance
+    const git = require('git-rev-sync')
+    const serviceVersion = git.short()
     const apm = service.init({
-      serviceName: 'angular-app',
-      serverUrl: 'http://localhost:8200'
+      serviceName: 'my-service-name',
+      serverUrl: 'http://localhost:8200',
+      serviceVersion: serviceVersion,
+      environment: 'my-environment'
     })
 
     apm.setUserContext({

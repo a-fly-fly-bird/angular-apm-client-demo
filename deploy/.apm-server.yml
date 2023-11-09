@@ -3,9 +3,22 @@ apm-server:
   frontend.enabled: true
   frontend.allow_origins: "*"
 
+apm-server.rum.enabled: true
+apm-server.auth.anonymous.rate_limit.event_limit: 300
+apm-server.auth.anonymous.rate_limit.ip_limit: 1000
+apm-server.auth.anonymous.allow_service: ['my-service-name', 'hello-world']
+apm-server.rum.allow_origins: ['*']
+apm-server.rum.allow_headers: ["header1", "header2"]
+apm-server.rum.library_pattern: "node_modules|bower_components|~"
+apm-server.rum.exclude_from_grouping: "^/webpack"
+
 output.elasticsearch:
   enabled: true
-  hosts: ["elasticsearch"]
+  hosts: ["elasticsearch:9200"]
+  username: "logadmin" 
+  password: "123456"
 
 setup.kibana:
   host: "kibana"
+  username: "logadmin" 
+  password: "123456"
