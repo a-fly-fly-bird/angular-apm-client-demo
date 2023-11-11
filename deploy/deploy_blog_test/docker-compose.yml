@@ -1,0 +1,36 @@
+version: "3"
+services:
+    elasticsearch:
+      image: elasticsearch:${ELK_VERSION}
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+      environment:
+      # ":-" 表示使用默认值。具体来说，这个语法表示如果ELASTIC_PASSWORD已经定义了，那么使用它的值；如果没有定义，那么就使用默认值，这里的默认值是空。
+        - ELASTIC_PASSWORD:${ELASTIC_PASSWORD:-}
+      networks:
+        - elk
+    kibana:
+      image: kibana:${ELK_VERSION}
+      ports:
+        - "5601:5601"
+      environment:
+        - KIBANA_SYSTEM_PASSWORD:${KIBANA_SYSTEM_PASSWORD:-}
+        - I18N_LOCALE:zh-CN
+      depends_on:
+        - elasticsearch
+      networks:
+        - elk
+    apm-server:
+      image: elastic/apm-server:${ELK_VERSION}
+      ports:
+        - "8200:8200"
+      environment:
+        - APM_SYSTEM_PASSWORD:${APM_SYSTEM_PASSWORD:-}
+      depends_on:
+        - elasticsearch
+      networks:
+        - elk
+networks:
+  elk:
+    driver: bridge
